@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import "./App.css";
-
-const USERS_URL = "https://jsonplaceholder.typicode.com/users";
+import { USERS_URL } from "./constants/AppConstants";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       monsters: [],
+      filteredMonsters: [],
     };
   }
 
@@ -16,7 +16,7 @@ class App extends Component {
       .then((response) => response.json())
       .then((users) =>
         this.setState(() => {
-          return { monsters: users };
+          return { monsters: users, filteredMonsters: users };
         })
       );
   }
@@ -24,7 +24,21 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {this.state.monsters.map((monster) => (
+        <input
+          className="search-box"
+          type="search"
+          placeholder="Search Monsters"
+          onChange={(event) => {
+            const searchString = event.target.value.toLowerCase();
+            const filteredMonsters = this.state.monsters.filter((monster) => {
+              return monster.name.toLowerCase().includes(searchString);
+            });
+            this.setState({
+              filteredMonsters,
+            });
+          }}
+        />
+        {this.state.filteredMonsters.map((monster) => (
           <h1 key={monster.id}>{monster.name}</h1>
         ))}
       </div>
